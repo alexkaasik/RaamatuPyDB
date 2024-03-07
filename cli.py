@@ -1,30 +1,32 @@
 from functions import *
 
 ### SQL ###
+'''
+CreateTable0 = "CREATE TABLE IF NOT EXISTS Autorid([]);"
+CreateTable1 = "CREATE TABLE IF NOT EXISTS Zanrid([]);"
+CreateTable2 = "CREATE TABLE IF NOT EXISTS Raamatud([]);"
+'''
 
-#CreateTable0 = "CREATE TABLE IF NOT EXITS Raamatud([]);"
-#CreateTable1 = "CREATE TABLE IF NOT EXITS Raamatud([]);"
-#CreateTable2 = "CREATE TABLE IF NOT EXITS Raamatud([]);"
-
-CreateTable0="""
-    Create table IF NOT EXISTS Raamatud (
+CreateTableAutorid="""
+    Create table IF NOT EXISTS Autorid (
         autor_id INTEGER PRIMARY KEY AUTOINCREMENT,
         autor_nimi varchar(255),
         sunnikuupaev date
     );
 """
 
-CreateTable1="""
+CreateTableZanrid="""
     Create table IF NOT EXISTS Zanrid (
         zanr_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        zanri_nimi varchar(255)
+        zanr_nimi varchar(255)
     );
 """
-CreateTable2="""
+
+CreateTableRaamatud="""
     Create table IF NOT EXISTS Raamatud (
         raamat_id INTEGER PRIMARY KEY AUTOINCREMENT,
         pealkiri varchar(255),
-        valjaandmise_kuupäev date,
+        valjaandmise_kuupaev date,
         autor_id INTEGER,
         zanr_id INTEGER,
         FOREIGN KEY(autor_id) REFERENCES Autorid(autor_id),
@@ -32,14 +34,13 @@ CreateTable2="""
     );
 """
 
-
 CreateDataTable = """
     ALTER TABLE Autorid ADD COLUMN autor_id INTEGER PRIMARY KEY AUTOINCREMENT;
 	ALTER TABLE Autorid ADD COLUMN autor_nimi varchar(255);
 	ALTER TABLE Autorid ADD COLUMN sunnikuupaev date;  
 
    	ALTER TABLE Zanrid ADD COLUMN zanr_id INTEGER PRIMARY KEY AUTOINCREMENT;
-	ALTER TABLE Zanrid ADD COLUMN zanri_nimi varchar(255);
+	ALTER TABLE Zanrid ADD COLUMN zanr_nimi varchar(255);
 
 	ALTER TABLE Raamatud ADD COLUMN raamat_id INTEGER PRIMARY KEY AUTOINCREMENT;
 	ALTER TABLE Raamatud ADD COLUMN pealkiri varchar(255);
@@ -50,59 +51,90 @@ CreateDataTable = """
 	ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(zanr_id) REFERENCES  Zanrid(zanr_id);
 """
 
-CreateDateTest = """
-	insert into Autorid(autor_nimi,sünnikuupäev)
+CreateDateTestAutorid = """
+	insert into Autorid(autor_nimi, sunnikuupaev)
 	values
 	('Aleksei Darner','09-09-1923'),
 	('Tester Barner','23.12-1892'),
 	('Phil ???','20-02-2002');
+"""
 
-	insert into Zanrid(zanri_nimi)
+CreateDateTestZanrid = """
+	insert into Zanrid(zanr_nimi)
 	values
 	('Fantastic'),
 	('Comedy'),
 	('Action');
+"""
 
-	insert into Raamatud(pealkiri, väljaandmise_kuupäev, autor_id, zanr_id)
+CreateDateTestRaamatud = """
+	insert into Raamatud(pealkiri, valjaandmise_kuupaev, autor_id, zanr_id)
 	values
-	('TCP/IP','09-09-2023',1,3),
+	('TCP/IP','09.09.2023',1,3),
 	('Bars & eagle','23.12-2021',2,2),
 	('baanna','20-02-2022',3,1);
-
-	select * from Autorid;
-	select * from Zanrid;
-	select * from Raamatud;
 """
 
-select_table = """
-    select * from Raamatud;
-"""
-
-del_user_data="""
-    delete from users where student = true;
-"""
-
-del_user_tb="drop table users;"
-
-
-### user ###
-print("0")
+### Start up ###
 conn = create_connection("./data.db")
-print("1")
-Execute_Query(conn, CreateTable0)
-Execute_Query(conn, CreateTable1)
-Execute_Query(conn, CreateTable2)
-print("2")
-Execute_Query(conn, CreateDateTest)
-
+Execute_Query(conn, CreateTableAutorid)
+Execute_Query(conn, CreateTableZanrid)
+Execute_Query(conn, CreateTableRaamatud)
+Execute_Query(conn, CreateDateTestAutorid)
+Execute_Query(conn, CreateDateTestZanrid)
+Execute_Query(conn, CreateDateTestRaamatud)
 
 while True:
-    option:str = input("input:")
+    option:str = input("mode:")
+    if option == "":
+        option="9"
     match option.lower()[0]:
         case 'q':
             exit()
-        case 'p':
+        case 'p': # Printing tables data
+            select_table_name=PickTable()
+            select_table=f"SELECT * FROM {select_table_name};"
+            print(select_table)
             date = Execute_Query_Read(conn,select_table)
-            print("user")
+            print(select_table_name.center(20))
             for user in date:
                 print(user)
+
+            
+        case 'a': # Adding date to tables
+            insert_table_name=PickTable()
+
+            match insert_table_name:
+                case "Autorid":
+                    TableColumns = "autor_nimi, sunnikuupaev"
+                    autor_nimi:str = input("Enter autor nimi: ")
+                    sunnikuupaev:str = input("Enter autor sunnikuupaev: ")
+                    RowValues = f"{autor_nimi},{sunnikuupaev}"
+
+                case "Zanrid":
+                    TableColumns = "zanr_nimi"
+                    zanr_nimi:str = input("Enter zanr nimi: ")
+                    RowValues = f"{zanr_nimi}"
+
+                case "Raamatud":
+                    TableColumns = "pealkiri, valjaandmise_kuupaev, autor_id, zanr_id"
+                    pealkiri:str = input("Enter autor nimi: ")
+                    valjaandmise_kuupaev:str = input("Enter autor sunnikuupaev: ")
+                    
+                    while True:
+                        autor_id:str = input("Enter autorINT: ")
+                        if autor_id.isdigit() and int(autor_id) <= int(len(Execute_Query_Read(conn,"select * from Autorid"))):
+                            break
+                    while True:
+                        zanr_id:int = input("Enter zanr: ")
+                        if zanr_id.isdigit() and int(zanr_id) <= len(Execute_Query_Read(conn,"select * from Zanrid")):
+                            break
+                    RowValues:str = f"'{pealkiri}','{valjaandmise_kuupaev}',{autor_id},{zanr_id}"
+
+            insert_table = f"insert into {insert_table_name} ({TableColumns}) values ({RowValues}) "
+            Execute_Query(conn,insert_table)
+        case 'c':
+            print("d")
+        case 'd':
+            del_table_name=PickTable()
+            Execute_Query_Delete(conn,)

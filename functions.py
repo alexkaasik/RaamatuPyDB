@@ -40,3 +40,19 @@ def Execute_Query_Delete(connection, query:str):
         print("\ndel tb/db\n")
     except Error as e:
         print(f"del:{e}")
+
+def PickTable():
+    while (True):
+        selectWhat:str = input("1=a,2=z,3=r:")
+        match selectWhat.lower()[0]:
+            case '1':
+                select_table_name = "Autorid"
+            case '2':
+                select_table_name = "Zanrid"
+            case '3':
+                select_table_name = "Raamatud"
+            case _:
+                continue
+                
+        break
+    return select_table_name
