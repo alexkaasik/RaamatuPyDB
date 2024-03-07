@@ -126,7 +126,7 @@ while True:
                         if autor_id.isdigit() and int(autor_id) <= int(len(Execute_Query_Read(conn,"select * from Autorid"))):
                             break
                     while True:
-                        zanr_id:int = input("Enter zanr: ")
+                        zanr_id:int = input("Enter zanrINT: ")
                         if zanr_id.isdigit() and int(zanr_id) <= len(Execute_Query_Read(conn,"select * from Zanrid")):
                             break
                     RowValues:str = f"'{pealkiri}','{valjaandmise_kuupaev}',{autor_id},{zanr_id}"
@@ -134,7 +134,28 @@ while True:
             insert_table = f"insert into {insert_table_name} ({TableColumns}) values ({RowValues}) "
             Execute_Query(conn,insert_table)
         case 'c':
-            print("d")
+            print("c")
         case 'd':
-            del_table_name=PickTable()
-            Execute_Query_Delete(conn,)
+            DelWha:str=input("1 a, 2 z 3 both:")
+            Cond:str = ""
+            if DelWha == '1' or DelWha == '3':
+                date = Execute_Query_Read(conn,"SELECT * FROM Autorid")
+                print("Autorid".center(20))
+                for user in date:
+                    print(user)
+                AutorIndex = input("input A Index: ")
+                Cond += f"autor_id = {AutorIndex}"
+
+            if DelWha == '3':
+                Cond += " and "
+                
+            if DelWha == '2' or DelWha == '3':
+                print("Zanrid".center(20))
+                date = Execute_Query_Read(conn,"SELECT * FROM Autorid")
+                for user in date:
+                    print(user)
+                ZanrIndex = input("input Z Index: ")
+                Cond += f"zanr_id = {ZanrIndex}"
+
+            delectQ = f"DELETE FROM Raamatud where {Cond};"
+            Execute_Query_Delete(conn,delectQ)
