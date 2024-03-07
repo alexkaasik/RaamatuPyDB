@@ -8,71 +8,71 @@ CreateTable2 = "CREATE TABLE IF NOT EXISTS Raamatud([]);"
 '''
 
 CreateTableAutorid="""
-    Create table IF NOT EXISTS Autorid (
-        autor_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        autor_nimi varchar(255),
-        sunnikuupaev date
-    );
+Create table IF NOT EXISTS Autorid (
+autor_id INTEGER PRIMARY KEY AUTOINCREMENT,
+autor_nimi varchar(255),
+sunnikuupaev date
+);
 """
 
 CreateTableZanrid="""
-    Create table IF NOT EXISTS Zanrid (
-        zanr_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        zanr_nimi varchar(255)
-    );
+Create table IF NOT EXISTS Zanrid (
+zanr_id INTEGER PRIMARY KEY AUTOINCREMENT,
+zanr_nimi varchar(255)
+);
 """
 
 CreateTableRaamatud="""
-    Create table IF NOT EXISTS Raamatud (
-        raamat_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        pealkiri varchar(255),
-        valjaandmise_kuupaev date,
-        autor_id INTEGER,
-        zanr_id INTEGER,
-        FOREIGN KEY(autor_id) REFERENCES Autorid(autor_id),
-        FOREIGN KEY(zanr_id) REFERENCES Zanrid(zanr_id)
-    );
+Create table IF NOT EXISTS Raamatud (
+raamat_id INTEGER PRIMARY KEY AUTOINCREMENT,
+pealkiri varchar(255),
+valjaandmise_kuupaev date,
+autor_id INTEGER,
+zanr_id INTEGER,
+FOREIGN KEY(autor_id) REFERENCES Autorid(autor_id),
+FOREIGN KEY(zanr_id) REFERENCES Zanrid(zanr_id)
+);
 """
 
 CreateDataTable = """
-    ALTER TABLE Autorid ADD COLUMN autor_id INTEGER PRIMARY KEY AUTOINCREMENT;
-	ALTER TABLE Autorid ADD COLUMN autor_nimi varchar(255);
-	ALTER TABLE Autorid ADD COLUMN sunnikuupaev date;  
+ALTER TABLE Autorid ADD COLUMN autor_id INTEGER PRIMARY KEY AUTOINCREMENT;
+ALTER TABLE Autorid ADD COLUMN autor_nimi varchar(255);
+ALTER TABLE Autorid ADD COLUMN sunnikuupaev date;  
 
-   	ALTER TABLE Zanrid ADD COLUMN zanr_id INTEGER PRIMARY KEY AUTOINCREMENT;
-	ALTER TABLE Zanrid ADD COLUMN zanr_nimi varchar(255);
+ALTER TABLE Zanrid ADD COLUMN zanr_id INTEGER PRIMARY KEY AUTOINCREMENT;
+ALTER TABLE Zanrid ADD COLUMN zanr_nimi varchar(255);
 
-	ALTER TABLE Raamatud ADD COLUMN raamat_id INTEGER PRIMARY KEY AUTOINCREMENT;
-	ALTER TABLE Raamatud ADD COLUMN pealkiri varchar(255);
-	ALTER TABLE Raamatud ADD COLUMN valjaandmise_kuupäev date;
-	ALTER TABLE Raamatud ADD COLUMN autor_id INTEGER;
-	ALTER TABLE Raamatud ADD COLUMN zanr_id INTEGER;
-	ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(autor_id) REFERENCES  Autorid(autor_id);
-	ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(zanr_id) REFERENCES  Zanrid(zanr_id);
+ALTER TABLE Raamatud ADD COLUMN raamat_id INTEGER PRIMARY KEY AUTOINCREMENT;
+ALTER TABLE Raamatud ADD COLUMN pealkiri varchar(255);
+ALTER TABLE Raamatud ADD COLUMN valjaandmise_kuupäev date;
+ALTER TABLE Raamatud ADD COLUMN autor_id INTEGER;
+ALTER TABLE Raamatud ADD COLUMN zanr_id INTEGER;
+ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(autor_id) REFERENCES  Autorid(autor_id);
+ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(zanr_id) REFERENCES  Zanrid(zanr_id);
 """
 
 CreateDateTestAutorid = """
-	insert into Autorid(autor_nimi, sunnikuupaev)
-	values
-	('Aleksei Darner','09-09-1923'),
-	('Tester Barner','23.12-1892'),
-	('Phil ???','20-02-2002');
+insert into Autorid(autor_nimi, sunnikuupaev)
+values
+('Aleksei Darner','09-09-1923'),
+('Tester Barner','23.12-1892'),
+('Phil ???','20-02-2002');
 """
 
 CreateDateTestZanrid = """
-	insert into Zanrid(zanr_nimi)
-	values
-	('Fantastic'),
-	('Comedy'),
-	('Action');
+insert into Zanrid(zanr_nimi)
+values
+('Fantastic'),
+('Comedy'),
+('Action');
 """
 
 CreateDateTestRaamatud = """
-	insert into Raamatud(pealkiri, valjaandmise_kuupaev, autor_id, zanr_id)
-	values
-	('TCP/IP','09.09.2023',1,3),
-	('Bars & eagle','23.12-2021',2,2),
-	('baanna','20-02-2022',3,1);
+insert into Raamatud(pealkiri, valjaandmise_kuupaev, autor_id, zanr_id)
+values
+('TCP/IP','09.09.2023',1,3),
+('Bars & eagle','23.12-2021',2,2),
+('baanna','20-02-2022',3,1);
 """
 
 ### Start up ###
@@ -100,7 +100,6 @@ while True:
             for user in date:
                 print(user)
 
-            
         case 'a': # Adding date to tables
             insert_table_name=PickTable()
 
@@ -131,10 +130,50 @@ while True:
                             break
                     RowValues:str = f"'{pealkiri}','{valjaandmise_kuupaev}',{autor_id},{zanr_id}"
 
-            insert_table = f"insert into {insert_table_name} ({TableColumns}) values ({RowValues}) "
-            Execute_Query(conn,insert_table)
+                    insert_table = f"insert into {insert_table_name} ({TableColumns}) values ({RowValues}) "
+                    Execute_Query(conn,insert_table)
         case 'c':
-            print("c")
+            Alter_table_name=PickTable()
+
+            date = Execute_Query_Read(conn,f"SELECT * FROM {Alter_table_name}")
+            for user in date:
+                print(user)
+
+            condPick:str = input("index 0\nname 1\n: ")
+            if condPick == "0":
+                Index:int = input("input: ")
+                if int(Index) <= len(f"SELECT * FROM {Alter_table_name}"):
+                    Cond = f" {Alter_table_name[:-2]}_id = {Index} "
+            elif condPick == "1":
+                name:str = input("input name: ")
+                Cond = f"{Alter_table_name[:-2]}_id = {name}"
+
+            match Alter_table_name:
+                case "Autorid":
+                    valuePick:str = input("0=autor_nimi\n1=sunnikuupaev\n: ")
+                    if valuePick == "0":
+                        Var = "autor_nimi"
+                    elif valuePick == "1":
+                        Var = "sunnikuupaev"
+
+                case "Zanrid":
+                    Var = "zanr_nimi"
+
+                case "Raamatud":
+                    valuePick:str = input("0=pealkiri\n1=valjaandmise_kuupaev\n2=autor_id\n3=zanr_id\n: ")
+                    if valuePick == "0":
+                        Var = "pealkiri"
+                    elif valuePick == "1":
+                        Var = "valjaandmise_kuupaev"
+                    elif valuePick == "2":
+                        Var = "autor_id"
+                    elif valuePick == "3":
+                        Var = "zanr_id"
+
+            Value:str = input("Change to")
+            AlterTable = f"update {Alter_table_name} set {Var} = '{Value}' where {Cond};"
+            Execute_Query(conn, AlterTable)
+
         case 'd':
             DelWha:str=input("1 a, 2 z 3 both:")
             Cond:str = ""
@@ -143,8 +182,8 @@ while True:
                 print("Autorid".center(20))
                 for user in date:
                     print(user)
-                AutorIndex = input("input A Index: ")
-                Cond += f"autor_id = {AutorIndex}"
+                    AutorIndex = input("input A Index: ")
+                    Cond += f"autor_id = {AutorIndex}"
 
             if DelWha == '3':
                 Cond += " and "
@@ -157,5 +196,5 @@ while True:
                 ZanrIndex = input("input Z Index: ")
                 Cond += f"zanr_id = {ZanrIndex}"
 
-            delectQ = f"DELETE FROM Raamatud where {Cond};"
-            Execute_Query_Delete(conn,delectQ)
+            deleteQ:str = f"DELETE FROM Raamatud where {Cond};"
+            Execute_Query_Delete(conn,deleteQ)
