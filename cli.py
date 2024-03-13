@@ -1,7 +1,6 @@
 from functions import *
 from sql import *
 
-print(test)
 ### Start up ###
 conn = create_connection("./data.db")
 
