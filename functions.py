@@ -1,6 +1,16 @@
 from sqlite3 import *
 from sqlite3 import Error
 
+test:str = 'HI'
+
+def HelpMenu():
+    print("h - Spawn menu of commands")
+    print("q - quit")
+    print("a - added date")
+    print("p - print whole table")
+    print("c - alter data in table")
+    print("d - delete data")
+
 def create_connection(path:str):
     connection = None
 
@@ -43,7 +53,7 @@ def Execute_Query_Delete(connection, query:str):
 
 def PickTable():
     while (True):
-        selectWhat:str = input("1=a,2=z,3=r:")
+        selectWhat:str = input("1=Autorid\n2=Zanrid\n3=Raamatud\n: ")
         match selectWhat.lower()[0]:
             case '1':
                 select_table_name = "Autorid"
