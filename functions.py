@@ -1,8 +1,6 @@
 from sqlite3 import *
 from sqlite3 import Error
 
-test:str = 'HI'
-
 def HelpMenu():
     print("h - Spawn menu of commands")
     print("q - quit")
@@ -36,7 +34,8 @@ def Execute_Query_Read(connection, query:str):
     result = None
     try:
         cursor.execute(query)
-        result= cursor.fetchall()
+        result=cursor.fetchall()
+        #print(result)
         return result
     except Error as e:
         print(f"vaga:{e}")
