@@ -27,8 +27,14 @@ while True:
             HelpMenu()
         case 'p': # Printing tables data
             select_table_name=PickTable()
-            select_table=f"SELECT * FROM {select_table_name};"
-            print(select_table)
+
+            if (select_table_name == "Autorid"):
+                select_table = SelectAutorid
+            elif (select_table_name == "Zanrid"):
+                select_table = SelectZanrid
+            elif (select_table_name == "Raamatud"):
+                select_table = SelectRaamatud
+            
             date = Execute_Query_Read(conn,select_table)
             print(select_table_name.center(20))
             for user in date:

@@ -2,7 +2,7 @@ from tkinter import *
 from functions import *
 from sql import *
 
-li=[["autor_id","autor_nimi","sunnikuupaev"],["zanr_id","zanr"],["raamat_id","pealkiri","valjaandmise_kuupaev","autor_id","zanr_id"]]
+li=[["id","autor_nimi","sunnikuupaev"],["id","zanr"],["id","pealkiri","valjaandmise_kuupaev","autor","zanr"]]
 
 gui = Tk()
 
@@ -30,7 +30,14 @@ def Print_List_Of_Data(table,mode):
     cells = {}
     CBG = {}
     boola = {}
-    s = f"select * from {table.get()};"
+    match table.get():
+        case "Autorid":
+            s = SelectAutorid
+        case "Zanrid":
+            s = SelectZanrid
+        case "Raamatud":
+            s = SelectRaamatud
+
     SqlQeury=Execute_Query_Read(conn,s)
     ColumnTableHeader(table)
     r = (len(SqlQeury))
@@ -39,7 +46,7 @@ def Print_List_Of_Data(table,mode):
         for y in range(w):
             test:str = SqlQeury[x][y]
             if (mode == "dele"):
-                boola[(x,0)]=IntVar()
+                Boola[(x,0)]=IntVar()
                 CB = Checkbutton(GuiScreen,onvalue=1, offvalue=0,variable=boola[(x,0)] ).grid(row=x+1,column=0)
                 CBG[(x,0)] = CB
 
@@ -68,6 +75,8 @@ def What_table_to_use_RB(mode:str):
     R3 = Radiobutton(GuiScreen,text="Raamatud",variable=Rg,value="Raamatud")
     if ( mode == "print" ):
         B1 = Button(GuiScreen,text="Print",command=lambda Rg=Rg:Print_List_Of_Data(Rg,"print"))
+    elif (mode == "add"):
+        B1 = Button(GuiScreen,text="Print",command=lambda Rg=Rg:Adding_data_DB(Rg))
     elif (mode == "dele"):
         B1 = Button(GuiScreen,text="Print",command=lambda Rg=Rg:Print_List_Of_Data(Rg,"dele"))
 
@@ -88,8 +97,46 @@ def ColumnTableHeader(table):
         i = 2
 
     for x in range(len(li[i])):
-        lable1 = Label(GuiScreen,text=(li[i][x]),width=15, height=2, bd=1,bg="#aaaaaa",relief="solid").grid(row=0,column=x+1)
+        lable1 = Label(GuiScreen,text=(li[i][x]),width=15, height=2, bd=1, bg="#aaaaaa", relief="solid").grid(row=0,column=x+1)
         la[x] = lable1
+
+def Adding_data_DB(table):
+    la={}
+    clearFrame()
+    ColumnTableHeader(table)
+
+    if (table.get()=="Autorid"):
+        i = 0
+    elif ( table.get() == "Zanrid" ):
+        i = 1
+    elif ( table.get() == "Raamatud"):
+        i = 2
+    txtvar = {} 
+    for x in range(1,len(li[i])):
+        txtvar[x-1]= StringVar()
+        Text1 = Entry(GuiScreen, width=13, bg="#aaaaaa", relief="solid",textvariable=txtvar[x-1]).grid(row=1,column=x+1)
+        la[x-1] = Text1
+
+    Button(GuiScreen,text="asd",command=lambda la=txtvar, table=table:paiogj(la,table)).grid(row=1,column=6)
+
+def paiogj(la,table):
+    g:str = ""
+    for x in range(len(la)):
+        g+=la[x].get()
+        g+="','"
+
+    match table.get():
+        case "Autorid":
+            varsg = "autor_nimi,sunnikuupaev"
+        case "Zanrid":
+            varsg = "zanr_nimi"
+        case "Raamatud":
+            varsg = "pealkiri,valjaandmise_kuupaev,autor_id,zanr_id"
+
+    SqlASD=f"insert into {table.get()}({varsg}) values ('{g[:-2]});"
+    Execute_Query(conn,SqlASD)
+
+
 
 
 ### Start up ###
@@ -111,7 +158,7 @@ MaxH1 = 1
 MaxW2 = 24
 MaxH2 = 9
 
-Menu = Button(gui,text = 'Menu',bg="white",font="Arial 24",width=MaxW1, height=MaxH1, borderwidth=4, relief="solid",command=lambda: What_table_to_use_RB("print"))
+Menu = Button(gui,text = 'Print',bg="white",font="Arial 24",width=MaxW1, height=MaxH1, borderwidth=4, relief="solid",command=lambda: What_table_to_use_RB("print"))
 Menu.grid(row=0,column=0)
 Add = Button(gui,text = 'Add',bg="white",font="Arial 24",width=MaxW1,height=MaxH1,borderwidth=4, relief="solid",command=lambda:What_table_to_use_RB("add"))
 Add.grid(row=1,column=0)

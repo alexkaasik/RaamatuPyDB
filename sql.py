@@ -72,3 +72,18 @@ values
 ('Bars & eagle','23.12-2021',2,2),
 ('baanna','20-02-2022',3,1);
 """
+
+SelectAutorid="""
+    SELECT * FROM Autorid
+"""
+
+SelectZanrid="""
+    SELECT * FROM Zanrid;
+"""
+
+SelectRaamatud="""
+    SELECT Raamatud.raamat_id, Raamatud.pealkiri, Raamatud.valjaandmise_kuupaev, Autorid.autor_nimi, Zanrid.zanr_nimi
+    FROM Raamatud
+    INNER JOIN Autorid ON Raamatud.autor_id=Autorid.autor_id
+    INNER JOIN Zanrid ON Raamatud.zanr_id=Zanrid.zanr_id;
+"""
