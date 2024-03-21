@@ -198,3 +198,8 @@ while True:
 
             deleteQ:str = f"DELETE FROM Raamatud where {Cond};"
             Execute_Query_Delete(conn,deleteQ)
+        case 'r':
+            date = Execute_Query_Read(conn,".tables;")
+            print("Autorid".center(20))
+            for user in date:
+                print(user)
