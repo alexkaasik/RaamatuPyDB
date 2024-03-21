@@ -31,7 +31,7 @@ FOREIGN KEY(autor_id) REFERENCES Autorid(autor_id),
 FOREIGN KEY(zanr_id) REFERENCES Zanrid(zanr_id)
 );
 """
-
+'''
 CreateDataTable = """
 ALTER TABLE Autorid ADD COLUMN autor_id INTEGER PRIMARY KEY AUTOINCREMENT;
 ALTER TABLE Autorid ADD COLUMN autor_nimi varchar(255);
@@ -48,7 +48,7 @@ ALTER TABLE Raamatud ADD COLUMN zanr_id INTEGER;
 ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(autor_id) REFERENCES  Autorid(autor_id);
 ALTER TABLE Raamatud ADD COLUMN FOREIGN KEY(zanr_id) REFERENCES  Zanrid(zanr_id);
 """
-
+'''
 CreateDateTestAutorid = """
 insert into Autorid(autor_nimi, sunnikuupaev)
 values
@@ -77,8 +77,16 @@ SelectAutorid="""
     SELECT * FROM Autorid
 """
 
+SelectAutoridNimi="""
+    SELECT autor_nimi FROM Autorid
+"""
+
 SelectZanrid="""
     SELECT * FROM Zanrid;
+"""
+
+SelectZanridNimi="""
+    SELECT zanr_nimi FROM Zanrid;
 """
 
 SelectRaamatud="""

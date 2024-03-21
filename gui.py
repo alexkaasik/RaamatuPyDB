@@ -46,7 +46,7 @@ def Print_List_Of_Data(table,mode):
         for y in range(w):
             test:str = SqlQeury[x][y]
             if (mode == "dele"):
-                Boola[(x,0)]=IntVar()
+                boola[(x,0)]=IntVar()
                 CB = Checkbutton(GuiScreen,onvalue=1, offvalue=0,variable=boola[(x,0)] ).grid(row=x+1,column=0)
                 CBG[(x,0)] = CB
 
